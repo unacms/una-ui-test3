@@ -1,4 +1,6 @@
 // @ts-check
+// vi: set ts=2 sw=2 sts=2:
+
 const { devices } = require('@playwright/test');
 
 /**
@@ -31,8 +33,11 @@ const config = {
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
+
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  // reporter: 'html',
+  reporter: [['junit', { outputFile: 'results/results.xml' }]],
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */

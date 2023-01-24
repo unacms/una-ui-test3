@@ -9,7 +9,7 @@ test.describe('Login', () => {
     await page.goto('https://ci.una.io/test3/login');
   });
 
-  test('Login with empty user credentials', async ({ page }) => {
+  test('should not allow empty user credentials', async ({ page }) => {
     await page.getByRole('button', { name: 'Log in' }).click();
     await expect(page.getByText('Error Occurred')).toBeVisible();
   });
