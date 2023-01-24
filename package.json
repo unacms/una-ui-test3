@@ -1,0 +1,21 @@
+{
+  "name": "playwright",
+  "version": "1.0.0",
+  "description": "Install depedences: ```bash npm install ```",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unaio/una-ui-test3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unaio/una-ui-test3/issues"
+  },
+  "homepage": "https://github.com/unaio/una-ui-test3#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.29.2"
+  }
+}
