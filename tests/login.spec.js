@@ -6,7 +6,7 @@ test.describe('Login', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies();
-    await page.goto('https://ci.una.io/test3/login');
+    await page.goto('login');
   });
 
   test('should not allow empty user credentials', async ({ page }) => {

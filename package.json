@@ -1,7 +1,7 @@
 {
   "name": "playwright",
   "version": "1.0.0",
-  "description": "Install depedences: ```bash npm install ```",
+  "description": "UNA e2e tests",
   "main": "index.js",
   "scripts": {},
   "repository": {
@@ -17,5 +17,8 @@
   "homepage": "https://github.com/unaio/una-ui-test3#readme",
   "devDependencies": {
     "@playwright/test": "^1.29.2"
+  },
+  "dependencies": {
+    "dotenv-flow": "^3.2.0"
   }
 }
