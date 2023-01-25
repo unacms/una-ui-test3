@@ -6,7 +6,7 @@ const { devices } = require('@playwright/test');
 /**
  * Read environment variables from file.
  */
-require('dotenv-flow').config();
+require('dotenv-flow').config({silent: true});
 
 /**
  * @see https://playwright.dev/docs/test-configuration

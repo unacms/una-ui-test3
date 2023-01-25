@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "UNA e2e tests",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/unaio/una-ui-test3.git"
