@@ -6,15 +6,19 @@ test.describe('Login', () => {
 
 
   test.beforeEach(async ({ page }) => {
-    await page.context().clearCookies();
+    //await page.context().clearCookies();
     await page.goto('login');
   });
 
+  test.afterEach(async ({ page }) => {
+    await page.context().clearCookies();
+  });
 
   test('Should allow valid admin credentials',  async ({ page }) => {
     await test.step('Fill in and submit form', async () => {
       await page.locator('input[name="ID"]').fill(process.env.userAdminEmail);
       await page.locator('input[name="Password"]').fill(process.env.userAdminPwd);
+      await expect(page.locator('#bx-form-element-rememberMe input[name=rememberMe]')).not.toBeChecked();
       await page.getByRole('button', { name: 'Log in' }).click();
     });
 
@@ -23,7 +27,7 @@ test.describe('Login', () => {
 
     // check if cookies have no expiry date (for session only)
     const cookies = await page.context().cookies();
-    expect(cookies.find(c => c.name === 'memberID').expires).toBeLessThan(0);
+    expect(cookies.find(c => c.name === 'memberSession').expires).toBeLessThan(0);
   });
 
 
@@ -31,6 +35,7 @@ test.describe('Login', () => {
     await test.step('Fill in and submit form', async () => {
       await page.locator('input[name="ID"]').fill(process.env.userRegularEmail);
       await page.locator('input[name="Password"]').fill(process.env.userRegularPwd);
+      await expect(page.locator('#bx-form-element-rememberMe input[name=rememberMe]')).not.toBeChecked();
       await page.getByRole('button', { name: 'Log in' }).click();
     });
 
@@ -39,7 +44,7 @@ test.describe('Login', () => {
 
     // check if cookies have no expiry date (for session only)
     const cookies = await page.context().cookies();
-    expect(cookies.find(c => c.name === 'memberID').expires).toBeLessThan(0);
+    expect(cookies.find(c => c.name === 'memberSession').expires).toBeLessThan(0);
   });
 
 
@@ -57,7 +62,7 @@ test.describe('Login', () => {
 
     // check if cookies have expiry date
     const cookies = await page.context().cookies();
-    expect(cookies.find(c => c.name === 'memberID').expires).toBeGreaterThan(0);
+    expect(cookies.find(c => c.name === 'memberSession').expires).toBeGreaterThan(0);
   });
 
 
