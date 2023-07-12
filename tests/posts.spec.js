@@ -56,17 +56,34 @@ test.describe('Posts', () => {
 
   test('Should allow to create post',  async ({ page }) => {
 
+    // fill in fields
     for await (const [, row] of Post.data.entries()) 
       await fillFormInput(page, row);
 
-    await page.getByRole('button', { name: 'Publish' }).click();
+    // upload cover image
+    if (typeof(Post.cover) !== 'undefined')
+      await html5upload(page, '#bx-form-element-covers .filepond--drop-label', '#bx-form-element-covers .bx-form-input-files-result > .bx-uploader-ghost', Post.cover);
 
-    await expect(page.locator('#bx-page-view-post')).toBeVisible();
+    // upload attachment
+    if (typeof(Post.photo_attachment) !== 'undefined')
+      await html5upload(page, '#bx-form-element-attachments .photo_html5 a', '#bx-form-element-pictures .bx-form-input-files-result > .bx-uploader-ghost', Post.photo_attachment);
+
+    await page.getByRole('button', { name: 'Publish' }).click(); // submit form
+
+    await expect(page.locator('#bx-page-view-post')).toBeVisible(); // ensure that submitted post redirected to the post view page
   });
 
 
 });
 
+
+async function html5upload (page, fileChooserSelector, fileResultsSelector, filePath) {
+  page.on('filechooser', async fileChooser => {
+    await fileChooser.setFiles(filePath);
+  });    
+  await page.locator(fileChooserSelector).click(); // click on file chooser element
+  await page.waitForFunction((sel) => !!document.querySelector(sel), fileResultsSelector); // wait until file is uploaded
+}
 
 async function fillFormInput (page, row) {
   let e = null;
