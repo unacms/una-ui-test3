@@ -5,8 +5,9 @@ const { test, expect } = require('@playwright/test');
 const Person = require("../fixtures/persons/tom");
 const Post = require("../fixtures/posts/sample");
 
-test.describe('Posts', () => {
+const { html5upload, fillFormInput } = require('../lib/util.js');
 
+test.describe('Posts', () => {
 
   test.beforeEach(async ({ page }) => {
 
@@ -49,60 +50,34 @@ test.describe('Posts', () => {
         await expect(page.getByRole('heading', { name: Person.data.fullname })).toBeVisible();
       }
     });
-
-    await page.goto('create-post');
+    
   });
 
 
   test('Should allow to create post',  async ({ page }) => {
 
-    // fill in fields
-    for await (const [, row] of Post.data.entries()) 
-      await fillFormInput(page, row);
+    const response = await page.goto(Post.uri);  
+    if (response && 404 == response.status()) { // check if post already isn't exist yet
 
-    // upload cover image
-    if (typeof(Post.cover) !== 'undefined')
-      await html5upload(page, '#bx-form-element-covers .filepond--drop-label', '#bx-form-element-covers .bx-form-input-files-result > .bx-uploader-ghost', Post.cover);
+      await page.goto('create-post');
 
-    // upload attachment
-    if (typeof(Post.photo_attachment) !== 'undefined')
-      await html5upload(page, '#bx-form-element-attachments .photo_html5 a', '#bx-form-element-pictures .bx-form-input-files-result > .bx-uploader-ghost', Post.photo_attachment);
+      // fill in fields
+      for await (const [, row] of Post.data.entries()) 
+        await fillFormInput(page, row);
 
-    await page.getByRole('button', { name: 'Publish' }).click(); // submit form
+      // upload cover image
+      if (typeof(Post.cover) !== 'undefined')
+        await html5upload(page, '#bx-form-element-covers .filepond--drop-label', '#bx-form-element-covers .bx-form-input-files-result > .bx-uploader-ghost', Post.cover);
 
-    await expect(page.locator('#bx-page-view-post')).toBeVisible(); // ensure that submitted post redirected to the post view page
+      // upload attachment
+      if (typeof(Post.photo_attachment) !== 'undefined')
+        await html5upload(page, '#bx-form-element-attachments .photo_html5 a', '#bx-form-element-pictures .bx-form-input-files-result > .bx-uploader-ghost', Post.photo_attachment);
+
+      await page.getByRole('button', { name: 'Publish' }).click(); // submit form
+
+      await expect(page.locator('#bx-page-view-post')).toBeVisible(); // ensure that submitted post redirected to the post view page
+    }
+
   });
 
-
 });
-
-
-async function html5upload (page, fileChooserSelector, fileResultsSelector, filePath) {
-  page.on('filechooser', async fileChooser => {
-    await fileChooser.setFiles(filePath);
-  });    
-  await page.locator(fileChooserSelector).click(); // click on file chooser element
-  await page.waitForFunction((sel) => !!document.querySelector(sel), fileResultsSelector); // wait until file is uploaded
-}
-
-async function fillFormInput (page, row) {
-  let e = null;
-  if (typeof(row.name) !== 'undefined')
-    e = page.locator(`[name="${row.name}"]`);
-  else if (typeof(row.id) !== 'undefined')
-    e = page.locator(`#${row.id}`);
-  else if (typeof(row.sel) !== 'undefined')
-    e = page.locator(row.sel);
-
-  if (null !== e) {
-    if (typeof(row.eval) !== 'undefined' && true == row.eval)
-      await e.evaluate((el, v) => {
-        el.value = v;
-      }, row.val);
-    else if (typeof(row.select) !== 'undefined')
-      await e.selectOption(String(row.select));
-    else
-      await e.fill(String(row.val), row.force ? {force: true} : {});
-  }
-};
-

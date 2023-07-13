@@ -1,4 +1,5 @@
 module.exports = {
+    "uri": "view-post/sample",
     "data": [
         { name: "title", val: "Sample" },
         { name: "cat", select: 3 }, // Art
