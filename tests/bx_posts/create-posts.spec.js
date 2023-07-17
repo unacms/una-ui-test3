@@ -2,10 +2,10 @@
 
 const { test, expect } = require('@playwright/test');
 
-const Person = require("../fixtures/persons/tom");
-const Post = require("../fixtures/posts/sample");
+const Person = require("../../fixtures/persons/tom");
+const Post = require("../../fixtures/posts/sample");
 
-const { html5upload, fillFormInput } = require('../lib/util.js');
+const { html5upload, fillFormInput } = require('../../lib/util.js');
 
 test.describe('Posts', () => {
 
