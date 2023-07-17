@@ -2,8 +2,8 @@
 
 const { test, expect } = require('@playwright/test');
 
-const Person = require("../../fixtures/persons/tom");
-const Post = require("../../fixtures/posts/sample");
+const Person = require("../../fixtures/bx_persons/tom");
+const Post = require("../../fixtures/bx_posts/sample");
 
 const { html5upload, fillFormInput } = require('../../lib/util.js');
 
