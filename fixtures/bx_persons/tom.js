@@ -3,5 +3,5 @@ module.exports = {
         { name: "fullname", val: "Tom" },
         { name: "gender", select: 1 }
     ],
-    "avatar": "fixtures/persons/tom.png",
+    "avatar": "fixtures/bx_persons/tom.png",
 }
