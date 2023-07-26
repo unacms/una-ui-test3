@@ -1,0 +1,10 @@
+module.exports = {
+    "data": [
+        { name: "fullname", val: "Tim Doe, MD. PhD." },
+        { name: "gender", select: 1 },
+        { name: "birthday", val: "1994-01-15", "eval": true },
+        { name: "description", "eval": true, val: "<p>Hey there! I'm Tim, but around the digital block, they call me the 'Social App Maverick.' Despite my years (or lack thereof), I've racked up quite the coding portfolio and am now setting my sights on the big game - creating the world's best social app!</p><p>Now, I might not have decades of experience under my belt, but boy, do I have ambition and a knack for coding! I've been romancing JavaScript since my teens, and I'm fluent in the love language of React and Node.js. Together, we're on a mission to create an app that'll bring people together like never before.</p><p>Social media? I get it. It's more than just selfies and hashtags. It's about creating connections, sharing moments, and bringing the world closer together. And I plan on being the guy who takes it to the next level. Think Facebook meets Instagram meets something you've never seen before. Intriguing? You bet.</p><p>But don't let my age fool you. Even though I'm a fresh face in the industry, I've spent countless hours honing my skills and building small-scale projects that have prepared me for this moment.</p><p>When I'm not weaving code into digital masterpieces, you'll find me exploring the latest trends in social media, brainstorming the next big idea, or sketching out wireframes on any surface I can find (sorry, mom).</p><p>So, if you're seeking a developer with fire in his belly, coding in his fingers, and a grand vision to revolutionize the social media landscape, then you're in the right place. Let's make the digital world a little more social, one line of code at a time!</p>"}
+    ],
+    "email":"luck@example.com",
+    "avatar": "fixtures/bx_persons/person7/avatar.jpg",
+}

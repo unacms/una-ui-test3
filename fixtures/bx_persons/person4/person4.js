@@ -1,0 +1,10 @@
+module.exports = {
+    "data": [
+        { name: "fullname", val: "Jane Doe" },
+        { name: "gender", select: 2 },
+        { name: "birthday", val: "1988-08-16", "eval": true },
+        { name: "description", "eval": true, val: "<p>Hi there! I'm Jane, your go-to gal for all things frontend and UX. But don't just think of me as another coder or designer. I prefer the title 'Digital Alchemist,' turning mere ideas into digital gold.</p><p>For over 8 years, I've been bewitching screens with magical UX designs and stunning frontend interfaces. Armed with the tools of my craft (React for slick, responsive frontends and Figma for intuitive, user-friendly designs), I've embarked on countless quests into the realms of app development and website design.</p><p>React? Oh, we're like two peas in a pod. Together, we breathe life into static screens and spin web components that would make even Rumpelstiltskin green with envy.</p><p>And Figma, my trusty sidekick, is always at the ready, helping me sketch out user journeys, wireframes, and prototypes that users can't help but fall in love with. I craft experiences that are more than just pixel-deep; they're meaningful, memorable, and truly magical.</p><p>When I'm not busy concocting the next irresistible user interface or enchanting a stubborn line of code, you'll likely find me exploring the latest design trends or getting lost in a good book (Currently, it's a toss-up between tech journals and fantasy epics. I mean, who can resist a good dragon tale or a deep dive into the newest JS framework?)</p><p>So, if you're on the hunt for a frontend wizard who can wave her magic wand (or, in my case, magic stylus) and transform your vision into an awe-inspiring reality, look no further. I'm always game for the next big adventure!</p>"}
+    ],
+    "email":"eva@example.com",
+    "avatar": "fixtures/bx_persons/person4/avatar.jpg",
+}

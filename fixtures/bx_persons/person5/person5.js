@@ -1,0 +1,10 @@
+module.exports = {
+    "data": [
+        { name: "fullname", val: "Jack Doe Junior" },
+        { name: "gender", select: 1 },
+        { name: "birthday", val: "1982-12-05", "eval": true },
+        { name: "description", "eval": true, val: "<p>I'm Jack, but you can also call me the Next.js Junkie or the Overoptimization Overlord. Why? Well, let's just say that my love for Next.js and the thrill of tweaking code for optimal performance is more infectious than a catchy tune.</p><p>For more than a decade, I've been deep diving into the world of code, crafting nifty applications that not only work but work efficiently. \"Fast\", \"Scalable\", and \"Optimized\" are not just buzzwords to me, but mantras I live by.</p><p>Next.js and I are a match made in heaven. You know the kind where you finish each other's lines (of code)? Together, we’ve built dynamic, user-friendly, and high-performing JavaScript applications that would put a cheetah's speed to shame.</p><p>I’m the kind of guy who gets a kick out of optimizing, scaling, and squeezing every last drop of performance out of code. A line of inefficient code? Not on my watch! I can smell unnecessary computation a mile away and believe in making every millisecond count. I mean, who wants to wait around in this age of instant gratification?</p><p>Away from the world of curly braces and semicolons, you'll find me catching up on the latest trends in the JS universe or daydreaming about ways to make things run faster. (Hint: I’m often overheard whispering sweet nothings to server-side rendering and dreaming about perfectly streamlined websites.)</p><p>So, if you're looking for someone who's all about making things work faster, better, and more efficiently, look no further. I'm always ready for a good challenge, especially if it involves taking performance to the next level!</p>"}
+    ],
+    "email":"jack@example.com",
+    "avatar": "fixtures/bx_persons/person5/avatar.jpg",
+}
