@@ -27,7 +27,8 @@ for (let i = 0; i < Accounts.data.length; i++) {
             await page.locator("button[name='do_publish']").click();
 
             // check if account exists
-            const isAccountExists = await page.evaluate(() => !document.querySelector('#bx-form-element-email .bx-form-warn'));
+            await page.waitForLoadState();
+            const isAccountExists = await page.locator('#bx-form-element-email .bx-form-warn').isVisible();
             if (isAccountExists) {
                 return;
             }

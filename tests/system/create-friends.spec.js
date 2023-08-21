@@ -64,7 +64,7 @@ for (const [i, row] of friends.data.entries()) {
                 await page.locator('#bx-menu-toolbar-item-account a').click();
                 await expect(page.locator('li.bx-menu-item-logout a')).toBeVisible();
             });
-        });        
+        });
     }
     // send friends request
     for (const [j, item] of friendsReady.get(row.name).entries()) {
