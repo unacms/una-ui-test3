@@ -16,25 +16,6 @@ for (let i = 1; i < 10; i++) {
     persons[i] = require(path);
     test.describe('Person ' + i, () => {
 
-        test.beforeEach(async ({ page }) => {
-            await test.step('Login ' + i, async () => {
-                await page.context().clearCookies();
-                await page.goto('login');
-                await page.locator('input[name="ID"]').fill(persons[i].email);
-                await page.locator('input[name="Password"]').fill(process.env.userTomPwd);
-                await page.getByRole('button', { name: 'Log in' }).click();
-
-                // make sure that there is no "Please Wait" loading screen and user is logged in
-                await page.waitForFunction(() => !!document.querySelector('body.bx-user-authorized'));
-            });
-            await test.step('Discard help tour' + i, async () => {
-                await page.waitForLoadState(); // we need to make sure that page is loaded, since tour is shown only when page is loaded
-                const isTourShown = await page.evaluate(() => !!document.querySelector('[data-shepherd-step-id="tour-homepage"]'));
-                if (isTourShown)
-                    await page.getByRole('button', { name: 'Exit' }).click();
-            });
-        });
-
         test('Create profile ' + i, async ({ page }) => {
             await test.step('Create person', async () => {
                 let isProfileCreated = await page.evaluate(() => !document.querySelector('#sys-account-profile-system'));
