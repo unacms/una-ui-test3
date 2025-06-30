@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const { login, discardHelpTour } = require('../../lib/util.js');
+const { login, discardHelpTour, prepareUri } = require('../../lib/util.js');
 
 const fs = require("fs");
 const pathMain = require("path");
@@ -9,12 +9,6 @@ const friends = require("../../fixtures/system/friends");
 const friendsReady = new Map();
 
 const pagePrefix = 'u/';
-
-function prepareUri(str) {
-    let strFinal = str.trim().replaceAll(/[\s,.]/g, '-');
-    strFinal = strFinal.replace(/([-^]+)/g, '-');
-    return strFinal.replace(/([-]+)$/g, '');
-}
 
 // setup the correct friends lists for every user without repeat
 for (const [, row] of friends.data.entries()) {
@@ -66,7 +60,7 @@ for (const [i, row] of friends.data.entries()) {
                 const response = await page.goto(visitUrl);
                 if (response && 404 != response.status()) { // check if profile exist                
                     await test.step('Send friend request link', async () => {
-                        await page.locator('li.bx-menu-item-profile-friend-add a').click();
+                        await page.locator('li.bx-menu-item-profile-friends a').click();
                     });
                 }
             });
