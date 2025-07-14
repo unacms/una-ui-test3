@@ -23,7 +23,6 @@ for (const [, row] of friends.data.entries()) {
 };
 
 for (const [i, row] of friends.data.entries()) {
-	let nameUri = await prepareUri(row.name);
     
     test.describe('Setup friends connection' + i, () => {
         test.beforeEach(async ({ page }) => {
@@ -41,6 +40,7 @@ for (const [i, row] of friends.data.entries()) {
         // accept friends request, the first person is passed this step
         if (i > 0) {
             test('Visit the friends request page' + i,  async ({ page }) => {
+                const nameUri = await prepareUri(row.name);
                 await page.goto('persons-profile-friends/' + nameUri);
                 let elements = page.locator('#bx-grid-table-sys_grid_connections').getByRole('button').filter({ hasText: 'Accept' });
                 let count = await elements.count();
