@@ -23,7 +23,7 @@ for (const [, row] of friends.data.entries()) {
 };
 
 for (const [i, row] of friends.data.entries()) {
-	let nameUri = prepareUri(row.name);
+	let nameUri = await prepareUri(row.name);
     
     test.describe('Setup friends connection' + i, () => {
         test.beforeEach(async ({ page }) => {
