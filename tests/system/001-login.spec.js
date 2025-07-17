@@ -1,107 +1,117 @@
 // vi: set ts=2 sw=2 sts=2:
 
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require("@playwright/test");
+const {
+    checkRedirectPage,
+    checkCookiesHaveExpiryDate,
+    preLogin,
+    login,
+    logout,
+    discardHelpTour,
+} = require("../../lib/util");
 
-test.describe('Login', () => {
-
-
-  test.beforeEach(async ({ page }) => {
-    //await page.context().clearCookies();
-    await page.goto('login');
-  });
-
-  test.afterEach(async ({ page }) => {
-    await page.context().clearCookies();
-  });
-
-  test('Should allow valid admin credentials',  async ({ page }) => {
-    await test.step('Fill in and submit form', async () => {
-      await page.locator('input[name="ID"]').fill(process.env.userAdminEmail);
-      await page.locator('input[name="Password"]').fill(process.env.userAdminPwd);
-      await expect(page.locator('#bx-form-element-rememberMe input[name=rememberMe]')).not.toBeChecked();
-      await page.getByRole('button', { name: 'Log in' }).click();
+test.describe("Login", () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto("login");
     });
 
-    // check redirect page
-    await expect(page.locator('.bx-msg-box')).toHaveText('Please Wait');
-
-    // check if cookies have no expiry date (for session only)
-    const cookies = await page.context().cookies();
-    expect(cookies.find(c => c.name === 'memberSession').expires).toBeLessThan(0);
-  });
-
-
-  test('Should allow regular user credentials',  async ({ page }) => {
-    await test.step('Fill in and submit form', async () => {
-      await page.locator('input[name="ID"]').fill(process.env.userRegularEmail);
-      await page.locator('input[name="Password"]').fill(process.env.userRegularPwd);
-      await expect(page.locator('#bx-form-element-rememberMe input[name=rememberMe]')).not.toBeChecked();
-      await page.getByRole('button', { name: 'Log in' }).click();
+    test.afterEach(async ({ page }) => {
+        await page.context().clearCookies();
     });
 
-    // check redirect page
-    await expect(page.locator('.bx-msg-box')).toHaveText('Please Wait');
+    test("Should allow valid admin credentials", async ({ page }) => {
+        await test.step("Fill in and submit form", async () => {
+            await preLogin(
+                page,
+                process.env.userAdminEmail,
+                process.env.userAdminPwd
+            );
+        });
 
-    // check if cookies have no expiry date (for session only)
-    const cookies = await page.context().cookies();
-    expect(cookies.find(c => c.name === 'memberSession').expires).toBeLessThan(0);
-  });
+        await test.step("Check redirect page", async () => {
+            await checkRedirectPage(page);
+        });
 
-
-  test('Should allow regular user credentials and checked "remember me" checkbox',  async ({ page }) => {
-    await test.step('Fill in and submit form', async () => {
-      await page.locator('input[name="ID"]').fill(process.env.userRegularEmail);
-      await page.locator('input[name="Password"]').fill(process.env.userRegularPwd);
-      await page.locator('#bx-form-element-rememberMe .bx-switcher-cont').click();
-      await expect(page.locator('#bx-form-element-rememberMe input[name=rememberMe]')).toBeChecked();
-      await page.getByRole('button', { name: 'Log in' }).click();
+        await test.step("Check cookies have no expiry date", async () => {
+            await checkCookiesHaveExpiryDate(page, false);
+        });
     });
 
-    // check redirect page
-    await expect(page.locator('.bx-msg-box')).toHaveText('Please Wait');
+    test("Should allow regular user credentials", async ({ page }) => {
+        await test.step("Fill in and submit form", async () => {
+            await preLogin(
+                page,
+                process.env.userRegularEmail,
+                process.env.userRegularPwd
+            );
+        });
 
-    // check if cookies have expiry date
-    const cookies = await page.context().cookies();
-    expect(cookies.find(c => c.name === 'memberSession').expires).toBeGreaterThan(0);
-  });
+        await test.step("Check redirect page", async () => {
+            await checkRedirectPage(page);
+        });
 
-
-  test('Should not allow invalid user credentials', async ({ page }) => {
-    await page.locator('input[name="ID"]').fill(process.env.userInvalidEmail);
-    await page.locator('input[name="Password"]').fill(process.env.userInvalidPwd);
-    await page.getByRole('button', { name: 'Log in' }).click();
-    await expect(page.getByText('Entered email or password is incorrect. Please try again.')).toBeVisible();
-  });
-
-
-  test('Should not allow empty user credentials', async ({ page }) => {
-    await page.getByRole('button', { name: 'Log in' }).click();
-    await expect(page.getByText('Error Occurred')).toBeVisible();
-  });
-
-
-  test('Should allow valid admin credentials (complex check)',  async ({ page }) => {
-    await test.step('Fill in and submit form', async () => {
-      await page.locator('input[name="ID"]').fill(process.env.userAdminEmail);
-      await page.locator('input[name="Password"]').fill(process.env.userAdminPwd);
-      await page.getByRole('button', { name: 'Log in' }).click();
+        await test.step("Check cookies have no expiry date", async () => {
+            await checkCookiesHaveExpiryDate(page, false);
+        });
     });
 
-    // make sure that there is no "Please Wait" loading screen and user is logged in
-    await page.waitForFunction(() => !!document.querySelector('body.bx-user-authorized'));
-   
-    await test.step('Discard help tour', async () => {
-      await page.waitForLoadState(); // we need to make sure that page is loaded, since tour is shown only when page is loaded
-      const isTourShown = await page.evaluate(() => !!document.querySelector('[data-shepherd-step-id="tour-homepage"]'));
-      if (isTourShown)
-        await page.getByRole('button', { name: 'Exit' }).click();
+    test('Should allow regular user credentials and checked "remember me" checkbox', async ({
+        page,
+    }) => {
+        await test.step("Fill in and submit form", async () => {
+            await preLogin(
+                page,
+                process.env.userRegularEmail,
+                process.env.userRegularPwd,
+                true
+            );
+        });
+
+        await test.step("Check redirect page", async () => {
+            await checkRedirectPage(page);
+        });
+
+        await test.step("Check cookies have expiry date", async () => {
+            await checkCookiesHaveExpiryDate(page, true);
+        });
     });
 
-    await test.step('Check logout button', async () => {
-      await page.locator('#bx-menu-toolbar-item-account a').click();
-      await expect(page.locator('li.bx-menu-item-logout a')).toBeVisible();
+    test("Should not allow invalid user credentials", async ({ page }) => {
+        await page
+            .locator('input[name="ID"]')
+            .fill(process.env.userInvalidEmail);
+        await page
+            .locator('input[name="Password"]')
+            .fill(process.env.userInvalidPwd);
+
+        await page.locator('button[name="login"]').click();
+
+        const warnLocator = page.locator("#bx-form-element-ID .bx-form-warn");
+        await expect(warnLocator).toBeVisible();
     });
-  });
 
+    test("Should not allow empty user credentials", async ({ page }) => {
+        await page.locator('button[name="login"]').click();
+        await expect(page.getByText("Error Occurred")).toBeVisible();
+    });
 
+    test("Should allow valid admin credentials (complex check)", async ({
+        page,
+    }) => {
+        await test.step("Fill in and submit form", async () => {
+            await login(
+                page,
+                process.env.userAdminEmail,
+                process.env.userAdminPwd
+            );
+        });
+
+        await test.step("Discard help tour", async () => {
+            await discardHelpTour(page);
+        });
+
+        await test.step("Check logout button", async () => {
+            await logout(page);
+        });
+    });
 });

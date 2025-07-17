@@ -1,54 +1,72 @@
-const { test, expect } = require('@playwright/test');
-
+const { test, expect } = require("@playwright/test");
 const fs = require("fs");
-const pathMain = require("path");
-const { login, html5upload, fillFormInput, discardHelpTour, logout } = require('../../lib/util.js');
-const posts = new Array();
+const path = require("path");
+const {
+    login,
+    html5upload,
+    fillFormInput,
+    discardHelpTour,
+} = require("../../lib/util.js");
 
-for (let i = 1; i <= 17; i++) {
-    let path = "../../fixtures/bx_posts/post" + i + '.js';
-    path = pathMain.join(__dirname, path);
+const postsByUser = {};
 
-    if (!fs.existsSync(path)) {
-        break;
+// Собираем все посты и группируем по email
+for (let i = 1; i <= 99; i++) {
+    const postPath = path.join(
+        __dirname,
+        `../../fixtures/bx_posts/post${i}.js`
+    );
+    if (!fs.existsSync(postPath)) break;
+
+    const postData = require(postPath);
+    const { email } = postData;
+
+    if (!postsByUser[email]) {
+        postsByUser[email] = [];
     }
+    postsByUser[email].push(postData);
+}
 
-    posts[i] = require(path);
-    test.describe('Posts ' + i, () => {
-
-        test.beforeEach(async ({ page }) => {
-            await test.step('Login' + i, async () => {
-                await login(page, posts[i].email);
+// Создаём по одному тесту на каждого пользователя
+for (const [email, userPosts] of Object.entries(postsByUser)) {
+    test.describe(`User posts: ${email}`, () => {
+        test(`Create all posts for ${email}`, async ({ page }) => {
+            test.setTimeout(600_000);
+            await test.step("Login", async () => {
+                await login(page, email);
             });
-            await test.step('Discard help tour' + i, async () => {
+
+            await test.step("Discard help tour", async () => {
                 await discardHelpTour(page);
             });
-        });
 
-        test('Create post ' + i, async ({ page }) => {
-            await test.step('Create next post', async () => {
-                const response = await page.goto(posts[i].uri);
-                if (response && 404 == response.status()) { // check if post doesn't already exist
-    
-                    // go to URL
-                    await page.goto('create-post');
-    
-                    // fill in fields
-                    for await (const [, row] of posts[i].data.entries())
-                        await fillFormInput(page, row);
-    
-                    // upload cover image
-                    if (typeof (posts[i].cover) !== 'undefined')
-                        await html5upload(page, '#bx-form-element-covers .filepond--drop-label', '#bx-form-element-covers .bx-form-input-files-result > .bx-uploader-ghost', posts[i].cover);
-    
-                    await page.locator("button[name='do_publish']").click(); // submit form
-    
-                    await expect(page.locator('#bx-page-view-post')).toBeVisible(); // ensure that submitted post redirected to the post view page
-                }
-            });
-            await test.step('Logout', async () => {
-                await logout(page);
-            });                        
+            for (const [index, post] of userPosts.entries()) {
+                await test.step(`Create post ${index + 1}`, async () => {
+                    const response = await page.goto(post.uri);
+                    if (response && response.status() === 404) {
+                        await page.goto("create-post");
+
+                        for (const field of post.data) {
+                            await fillFormInput(page, field);
+                        }
+
+                        if (post.cover) {
+                            await html5upload(
+                                page,
+                                "#bx-form-element-covers .filepond--drop-label",
+                                "#bx-form-element-covers .bx-form-input-files-result > .bx-uploader-ghost",
+                                post.cover
+                            );
+                        }
+
+                        await page.locator("button[name='do_publish']").click();
+
+                        await expect(
+                            page.locator("#bx-page-view-post")
+                        ).toBeVisible();
+                    }
+                });
+            }
         });
     });
-};
+}
