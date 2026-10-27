@@ -48,9 +48,15 @@ for (let i = 1; i < 10; i++) {
 
                     await page.getByRole("button", { name: "Submit" }).click();
 
+                    const fullname = persons[i].data.find(
+                        (row) => row.name === "fullname"
+                    ).val;
+
                     await expect(
                         page.getByRole("heading", {
-                            name: persons[i].data.fullname,
+                            level: 1,
+                            name: fullname,
+                            exact: true,
                         })
                     ).toBeVisible();
                 }
