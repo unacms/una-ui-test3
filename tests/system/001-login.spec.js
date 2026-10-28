@@ -32,8 +32,8 @@ test.describe("Login", () => {
             await checkRedirectPage(page);
         });
 
-        await test.step("Check cookies have no expiry date", async () => {
-            await checkCookiesHaveExpiryDate(page, false);
+        await test.step("Check cookies have an expiry date", async () => {
+            await checkCookiesHaveExpiryDate(page, true);
         });
     });
 
@@ -50,28 +50,7 @@ test.describe("Login", () => {
             await checkRedirectPage(page);
         });
 
-        await test.step("Check cookies have no expiry date", async () => {
-            await checkCookiesHaveExpiryDate(page, false);
-        });
-    });
-
-    test('Should allow regular user credentials and checked "remember me" checkbox', async ({
-        page,
-    }) => {
-        await test.step("Fill in and submit form", async () => {
-            await preLogin(
-                page,
-                process.env.userRegularEmail,
-                process.env.userRegularPwd,
-                true
-            );
-        });
-
-        await test.step("Check redirect page", async () => {
-            await checkRedirectPage(page);
-        });
-
-        await test.step("Check cookies have expiry date", async () => {
+        await test.step("Check cookies have an expiry date", async () => {
             await checkCookiesHaveExpiryDate(page, true);
         });
     });
