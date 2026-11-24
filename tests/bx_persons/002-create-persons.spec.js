@@ -6,6 +6,7 @@ const {
     login,
     fillFormInput,
     discardHelpTour,
+    chooseProfileTypeInPrompt,
     logout,
     uploadProfileAvatar,
 } = require("../../lib/util.js");
@@ -21,22 +22,46 @@ for (let i = 1; i < 10; i++) {
 
     persons[i] = require(path);
     test.describe("Person: " + i, () => {
+        // true if the profile creation page was opened from the
+        // "Create your profile" window shown after login
+        let isCreationPageOpened = false;
+
         test.beforeEach(async ({ page }) => {
             await test.step("Login: " + i, async () => {
                 await login(page, persons[i].email);
             });
-            await test.step("Discard help tour: " + i, async () => {
-                await discardHelpTour(page);
+            // The "Create your profile" window covers the page with a backdrop,
+            // so it must be handled first: choose Person in it.
+            await test.step("Choose Person in 'Create your profile': " + i, async () => {
+                isCreationPageOpened = await chooseProfileTypeInPrompt(
+                    page,
+                    "create-persons-profile"
+                );
             });
+            // the help tour is shown on the homepage only
+            if (!isCreationPageOpened) {
+                await test.step("Discard help tour: " + i, async () => {
+                    await discardHelpTour(page);
+                });
+            }
         });
 
         test("Create profile: " + i, async ({ page }) => {
             await test.step("Create person: ", async () => {
-                let isProfileCreated = await page.evaluate(
-                    () => !document.querySelector("#sys-account-profile-system")
-                );
+                // The "Create your profile" window replaces the informer message
+                // (#sys-account-profile-system), so a window means no profile yet.
+                let isProfileCreated =
+                    !isCreationPageOpened &&
+                    (await page.evaluate(
+                        () =>
+                            !document.querySelector(
+                                "#sys-account-profile-system"
+                            )
+                    ));
                 if (!isProfileCreated) {
-                    await page.goto("create-persons-profile");
+                    if (!isCreationPageOpened) {
+                        await page.goto("create-persons-profile");
+                    }
 
                     for (const [, row] of persons[i].data.entries()) {
                         await fillFormInput(page, row);
