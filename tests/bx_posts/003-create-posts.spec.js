@@ -46,6 +46,32 @@ for (const [email, userPosts] of Object.entries(postsByUser)) {
                     if (response && response.status() === 404) {
                         await page.goto("create-post");
 
+                        // Fail fast: a system/operator profile gets "Create a
+                        // profile first" instead of the form. Do not wait for
+                        // the 10-minute test timeout on body [name="title"].
+                        const titleField = page.locator('body [name="title"]');
+                        try {
+                            await titleField.waitFor({
+                                state: "visible",
+                                timeout: 15_000,
+                            });
+                        } catch {
+                            const denial = page.locator(
+                                ".bx-msg-box-state, .bx-msg-box-title"
+                            );
+                            const denialText = (
+                                await denial
+                                    .first()
+                                    .innerText()
+                                    .catch(() => "")
+                            ).trim();
+                            throw new Error(
+                                `Create Post form did not appear for ${email}` +
+                                    (denialText ? `: ${denialText}` : "") +
+                                    ". The current profile may be the system/operator profile, which cannot post."
+                            );
+                        }
+
                         for (const field of post.data) {
                             await fillFormInput(page, field);
                         }

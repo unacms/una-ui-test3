@@ -48,16 +48,19 @@ for (let i = 1; i < 10; i++) {
 
         test("Create profile: " + i, async ({ page }) => {
             await test.step("Create person: ", async () => {
-                // The "Create your profile" window replaces the informer message
-                // (#sys-account-profile-system), so a window means no profile yet.
-                let isProfileCreated =
-                    !isCreationPageOpened &&
-                    (await page.evaluate(
-                        () =>
-                            !document.querySelector(
-                                "#sys-account-profile-system"
-                            )
-                    ));
+                // A system/operator profile does not count. Operators do not get
+                // the "Create your profile" window, and the Get started checklist
+                // hides #sys-account-profile-system. The switcher lists only
+                // modules that act as a profile (bx_persons); each is a
+                // .sys-profile-switch-row. Type=system is omitted, and the
+                // "create a profile" menu on this page is not a row.
+                let isProfileCreated = false;
+                if (!isCreationPageOpened) {
+                    await page.goto("account-profile-switcher");
+                    isProfileCreated =
+                        (await page.locator(".sys-profile-switch-row").count()) >
+                        0;
+                }
                 if (!isProfileCreated) {
                     if (!isCreationPageOpened) {
                         await page.goto("create-persons-profile");
